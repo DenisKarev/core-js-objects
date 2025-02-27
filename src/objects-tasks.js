@@ -38,7 +38,6 @@ function mergeObjects(objects) {
   objects.forEach((o) => {
     Object.entries(o).forEach((e) => {
       const [k, v] = [...e];
-      console.log(res[k], k, v);
       if (res[k]) {
         res[k] += v;
       } else res[k] = v;
@@ -61,8 +60,12 @@ function mergeObjects(objects) {
  *    removeProperties({name: 'John', age: 30, city: 'New York'}, ['age']) => {name: 'John', city: 'New York'}
  *
  */
-function removeProperties(/* obj, keys */) {
-  throw new Error('Not implemented');
+function removeProperties(obj, keys) {
+  const res = obj;
+  keys.forEach((k) => {
+    delete res[k];
+  });
+  return res;
 }
 
 /**
@@ -77,8 +80,13 @@ function removeProperties(/* obj, keys */) {
  *    compareObjects({a: 1, b: 2}, {a: 1, b: 2}) => true
  *    compareObjects({a: 1, b: 2}, {a: 1, b: 3}) => false
  */
-function compareObjects(/* obj1, obj2 */) {
-  throw new Error('Not implemented');
+function compareObjects(obj1, obj2) {
+  return Object.keys(mergeObjects([obj1, obj2])).reduce((a, k) => {
+    if (obj1[k] !== obj2[k]) {
+      return false;
+    }
+    return true;
+  }, true);
 }
 
 /**
