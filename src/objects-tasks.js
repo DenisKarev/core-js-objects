@@ -136,10 +136,18 @@ function makeImmutable(obj) {
  *    makeWord({ a: [0, 1], b: [2, 3], c: [4, 5] }) => 'aabbcc'
  *    makeWord({ H:[0], e: [1], l: [2, 3, 8], o: [4, 6], W:[5], r:[7], d:[9]}) => 'HelloWorld'
  */
-function makeWord(/* lettersObject */) {
-  throw new Error('Not implemented');
+function makeWord(lettersObject) {
+  const arr = [];
+  const keys = Object.keys(lettersObject);
+  keys.forEach((key) => {
+    const indices = lettersObject[key];
+    indices.map((idx) => {
+      arr[idx] = key;
+      return idx;
+    });
+  });
+  return arr.join('');
 }
-
 /**
  * There is a queue for tickets to a popular movie.
  * The ticket seller sells one ticket at a time strictly in order and give the change.
@@ -154,10 +162,18 @@ function makeWord(/* lettersObject */) {
  *    sellTickets([25, 25, 50]) => true
  *    sellTickets([25, 100]) => false (The seller does not have enough money to give change.)
  */
-function sellTickets(/* queue */) {
-  throw new Error('Not implemented');
+function sellTickets(queue) {
+  const price = 25;
+  let sellAbility = true;
+  let cash = 0;
+  queue.forEach((bill) => {
+    // console.log(cash, bill, sellAbility);
+    if (bill === price) cash += price;
+    else if (bill - price > cash) sellAbility = false;
+    else cash += bill - price;
+  });
+  return sellAbility;
 }
-
 /**
  * Returns the rectangle object with width and height parameters and getArea() method
  *
