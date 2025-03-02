@@ -291,8 +291,15 @@ function sortCitiesArray(arr) {
  *    "Poland" => ["Lodz"]
  *   }
  */
-function group(/* array, keySelector, valueSelector */) {
-  throw new Error('Not implemented');
+function group(array, keySelector, valueSelector) {
+  const mmap = new Map();
+  array.forEach((e) => {
+    if (!mmap.has(keySelector(e))) {
+      mmap.set(keySelector(e), []);
+      mmap.get(keySelector(e)).push(valueSelector(e));
+    } else mmap.get(keySelector(e)).push(valueSelector(e));
+  });
+  return mmap;
 }
 
 /**
@@ -348,36 +355,140 @@ function group(/* array, keySelector, valueSelector */) {
  *
  *  For more examples see unit tests.
  */
+class Css {
+  #element = '';
+
+  done = {};
+
+  element(value) {
+    if (this.done.elem)
+      throw new Error(
+        'Element, id and pseudo-element should not occur more then one time inside the selector'
+      );
+    if (this.done.id)
+      throw new Error(
+        'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element'
+      );
+
+    this.#element += value;
+    this.done.elem = true;
+    return this;
+  }
+
+  id(value) {
+    if (this.done.id)
+      throw new Error(
+        'Element, id and pseudo-element should not occur more then one time inside the selector'
+      );
+    if (this.done.class)
+      throw new Error(
+        'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element'
+      );
+    if (this.done.pe || this.done.pc)
+      throw new Error(
+        'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element'
+      );
+    this.#element += `#${value}`;
+    this.done.id = true;
+    return this;
+  }
+
+  class(value) {
+    if (this.done.attr)
+      throw new Error(
+        'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element'
+      );
+    this.#element += `.${value}`;
+    this.done.class = true;
+    return this;
+  }
+
+  attr(value) {
+    if (this.done.pc)
+      throw new Error(
+        'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element'
+      );
+    this.#element += `[${value}]`;
+    this.done.attr = true;
+    return this;
+  }
+
+  pseudoClass(value) {
+    if (this.done.pe)
+      throw new Error(
+        'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element'
+      );
+    this.#element += `:${value}`;
+    this.done.pc = true;
+    return this;
+  }
+
+  pseudoElement(value) {
+    if (this.done.pe)
+      throw new Error(
+        'Element, id and pseudo-element should not occur more then one time inside the selector'
+      );
+    this.#element += `::${value}`;
+    this.done.pe = true;
+    return this;
+  }
+
+  combine(s1, c, s2) {
+    this.#element = `${s1.stringify()} ${c} ${s2.stringify()}`;
+    return this;
+  }
+
+  stringify() {
+    return this.#element;
+  }
+}
 
 const cssSelectorBuilder = {
-  element(/* value */) {
-    throw new Error('Not implemented');
+  arr: [],
+
+  element(value) {
+    return new Css().element(value);
   },
 
-  id(/* value */) {
-    throw new Error('Not implemented');
+  id(value) {
+    return new Css().id(value);
   },
 
-  class(/* value */) {
-    throw new Error('Not implemented');
+  class(value) {
+    return new Css().class(value);
   },
 
-  attr(/* value */) {
-    throw new Error('Not implemented');
+  attr(value) {
+    return new Css().attr(value);
   },
 
-  pseudoClass(/* value */) {
-    throw new Error('Not implemented');
+  pseudoClass(value) {
+    return new Css().pseudoClass(value);
   },
 
-  pseudoElement(/* value */) {
-    throw new Error('Not implemented');
+  pseudoElement(value) {
+    return new Css().pseudoElement(value);
   },
 
-  combine(/* selector1, combinator, selector2 */) {
-    throw new Error('Not implemented');
+  combine(selector1, combinator, selector2) {
+    return new Css().combine(selector1, combinator, selector2);
   },
 };
+
+// const builder = cssSelectorBuilder;
+// console.log(builder.element('div').stringify());
+// console.log(builder.id('main').class('container').class('editable').stringify());
+// console.log(builder.element('a').attr('href$=".png"').pseudoClass('focus').stringify());
+// console.log(
+//   builder.combine(
+//     builder.element('tr').pseudoClass('nth-of-type(even)'),
+//     '>',
+//     builder.element('td').pseudoClass('nth-of-type(even)')
+//   )
+// );
+// console.log(builder.element('table').element('div'));
+// console.log(builder.id('id1').id('id2'));
+// console.log(builder.pseudoElement('after').pseudoElement('before'));
 
 module.exports = {
   shallowCopy,
