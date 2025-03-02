@@ -475,21 +475,6 @@ const cssSelectorBuilder = {
   },
 };
 
-// const builder = cssSelectorBuilder;
-// console.log(builder.element('div').stringify());
-// console.log(builder.id('main').class('container').class('editable').stringify());
-// console.log(builder.element('a').attr('href$=".png"').pseudoClass('focus').stringify());
-// console.log(
-//   builder.combine(
-//     builder.element('tr').pseudoClass('nth-of-type(even)'),
-//     '>',
-//     builder.element('td').pseudoClass('nth-of-type(even)')
-//   )
-// );
-// console.log(builder.element('table').element('div'));
-// console.log(builder.id('id1').id('id2'));
-// console.log(builder.pseudoElement('after').pseudoElement('before'));
-
 module.exports = {
   shallowCopy,
   mergeObjects,
